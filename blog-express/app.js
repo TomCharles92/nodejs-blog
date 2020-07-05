@@ -10,7 +10,7 @@ var usersRouter = require('./routes/users');
 const blogRouter = require('./routes/blog')
 const userRouter = require('./routes/user')
 
-// 每次访问初始化一个实例？
+// 每次访问初始化一个实例？本次 http 请求的实例
 var app = express();
 
 // view engine setup
