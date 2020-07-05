@@ -1,6 +1,7 @@
 const {
   exec
 } = require('../db/mysql')
+const xss = require('xss')
 
 const getList = (author = '', keyword = '') => {
   let sql = `select * from blogs where 1=1 `
@@ -30,9 +31,10 @@ const newBlog = (blogData = {}) => {
 
   const sql = `
     insert into blogs (title, content, createtime, author)
-    values ('${title}', '${content}', ${createtime}, '${author}')
+    values ('${xss(title)}', '${content}', ${createtime}, '${author}')
   `
-
+  console.log(sql);
+  
   return exec(sql).then(insertData => {
     return {
       id: insertData.insertId
@@ -49,7 +51,7 @@ const updateBlog = (id, blogData = {}) => {
     update blogs set title='${title}', content='${content}' where id=${id}
   `
   console.log(sql);
-  
+
   return exec(sql).then(updateData => {
     console.log('updateData is ', updateData);
     if (updateData.affectedRows > 0) return true
