@@ -20,8 +20,6 @@ router.get('/list', function (req, res, next) {
 
   if (req.query.isadmin) {
     // 管理员界面
-    console.log(req.session.username);
-
     if (!req.session.username) {
       return res.json(new ErrorModel('未登录'))
     }

@@ -1,6 +1,7 @@
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
+const fs = require('fs')
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const session = require('express-session')
@@ -22,7 +23,16 @@ app.set('view engine', 'jade');
 
 // 插件 morgan，用来记录日志
 // 这里会记录访问日志？
-app.use(logger('dev'));
+if (process.env.NODE_EVN === 'dev') {
+  app.use(logger('dev'));
+} else {
+  const fileName = path.resolve(__dirname, "logs/access.log")
+  const writeStream = fs.createWriteStream(fileName);
+  app.use(logger('combined', {
+    stream: writeStream
+  }))
+}
+
 // 处理 post 中的数据，content-type: application/json 格式的数据
 app.use(express.json());
 // 处理 post 中的数据，application/x-www-form-urlencoded 格式的数据
@@ -39,8 +49,6 @@ const sessionStore = new RedisStore({
   client: redisClient
 })
 app.use(session({
-  // resave: true,
-  // saveUninitialized: false,
   secret: '3^yrXS!R61jFsna$',
   cookie: {
     // path: '/', // 默认值

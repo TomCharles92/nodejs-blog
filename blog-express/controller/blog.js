@@ -8,7 +8,6 @@ const getList = (author = '', keyword = '') => {
   if (author) sql += `and author='${author}' `
   if (keyword) sql += `and title like '%${keyword}%' `
   sql += `order by createtime desc;`
-  console.log(sql);
   return exec(sql)
 }
 
@@ -33,8 +32,6 @@ const newBlog = (blogData = {}) => {
     insert into blogs (title, content, createtime, author)
     values ('${xss(title)}', '${content}', ${createtime}, '${author}')
   `
-  console.log(sql);
-  
   return exec(sql).then(insertData => {
     return {
       id: insertData.insertId
@@ -50,10 +47,7 @@ const updateBlog = (id, blogData = {}) => {
   const sql = `
     update blogs set title='${title}', content='${content}' where id=${id}
   `
-  console.log(sql);
-
   return exec(sql).then(updateData => {
-    console.log('updateData is ', updateData);
     if (updateData.affectedRows > 0) return true
     return false
   })
