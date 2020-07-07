@@ -1,5 +1,6 @@
 const router = require('koa-router')()
 
+// ctx: request, response 的合体
 router.get('/', async (ctx, next) => {
   await ctx.render('index', {
     title: 'Hello Koa 2!'
