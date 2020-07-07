@@ -13,12 +13,14 @@ function getFileContent(fileName) {
   })
 }
 
-getFileContent('a.json').then(aData => {
+async function readFileData() {
+  const aData = await getFileContent('a.json')
   console.log('a data', aData)
-  return getFileContent(aData.next)
-}).then(bData => {
-  console.log('b data', bData);
-  return getFileContent(bData.next)
-}).then(cData => {
-  console.log('c data', cData);
+  const bData = await getFileContent(aData.next)
+  console.log('b data', bData)
+  const cData = await getFileContent(bData.next)
+  console.log('c data', cData)
+}
+readFileData().then(res => {
+  console.log("async 也会返回 promise，默认值是: ", res);
 })

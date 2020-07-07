@@ -7,12 +7,10 @@ function getFileContent(fileName, callback) {
   // 得到目标文件的绝对地址
   const fullFileName = path.resolve(__dirname, 'files', fileName)
   fs.readFile(fullFileName, (err, data) => {
-    if (err) {
-      console.log(err);
-      return
-    }
+    if (err) return console.log(err);
+
     // callback 的参数，通过回调函数传出去
-    callback(JSON.parse(data.toString())) 
+    callback(JSON.parse(data.toString()))
   })
 }
 
