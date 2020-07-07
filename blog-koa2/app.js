@@ -39,17 +39,17 @@ app.use(views(__dirname + '/views', {
 }))
 
 // 当前请求消耗的时间
-app.use(async (ctx, next) => {
-  const start = new Date()
-  await next()
-  const ms = new Date() - start
-  console.log(`${ctx.method} ${ctx.url} - ${ms}ms`)
-})
+// app.use(async (ctx, next) => {
+//   const start = new Date()
+//   await next()
+//   const ms = new Date() - start
+//   console.log(`${ctx.method} ${ctx.url} - ${ms}ms`)
+// })
 
 // 插件 morgan，用来记录日志
 // 这里会记录访问日志
-if (process.env.NODE_ENV !== 'dev') {
-  app.use(morgan('dev'));
+if (process.env.NODE_ENV === 'dev') {
+  // app.use(morgan('dev'));
 } else {
   const fileName = path.resolve(__dirname, "logs/access.log")
   const writeStream = fs.createWriteStream(fileName);
