@@ -7,6 +7,12 @@ const bodyparser = require('koa-bodyparser')
 const logger = require('koa-logger')
 const session = require('koa-generic-session')
 const redisStore = require('koa-redis')
+const {
+  REDIS_CONF
+} = require('./conf/db')
+const path = require('path');
+const fs = require('fs')
+const morgan = require('koa-morgan')
 
 const index = require('./routes/index')
 const users = require('./routes/users')
@@ -19,10 +25,12 @@ onerror(app)
 // middlewares
 // 处理 post 中多种数据格式
 app.use(bodyparser({
-  enableTypes:['json', 'form', 'text']
+  enableTypes: ['json', 'form', 'text']
 }))
 // 美化 json 格式
 app.use(json())
+// 美化 log 的，下面这种格式
+// --> POST /api/blog/new 200 57ms 42b
 app.use(logger())
 app.use(require('koa-static')(__dirname + '/public'))
 
@@ -30,7 +38,6 @@ app.use(views(__dirname + '/views', {
   extension: 'pug'
 }))
 
-// logger
 // 当前请求消耗的时间
 app.use(async (ctx, next) => {
   const start = new Date()
@@ -39,17 +46,29 @@ app.use(async (ctx, next) => {
   console.log(`${ctx.method} ${ctx.url} - ${ms}ms`)
 })
 
+// 插件 morgan，用来记录日志
+// 这里会记录访问日志
+if (process.env.NODE_ENV !== 'dev') {
+  app.use(morgan('dev'));
+} else {
+  const fileName = path.resolve(__dirname, "logs/access.log")
+  const writeStream = fs.createWriteStream(fileName);
+  app.use(morgan('combined', {
+    stream: writeStream
+  }))
+}
+
 // session 配置
 app.keys = ['!CK#1j51MpTzBKxa']
 app.use(session({
   cookie: {
     path: '/',
     httpOnly: true,
-    maxAge: 24*60*60*1000
+    maxAge: 24 * 60 * 60 * 1000
   },
   // 配置 redis
   store: redisStore({
-    all: '127.0.0.1:6379'
+    all: `${REDIS_CONF.host}:${REDIS_CONF.port}`
   })
 }))
 

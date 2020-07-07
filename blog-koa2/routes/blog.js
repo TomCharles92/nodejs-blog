@@ -42,10 +42,10 @@ router.get('/detail', async (ctx, next) => {
 
 // 新增博客
 router.post('/new', loginCheck, async (ctx, next) => {
-  const obj = Object.assign(ctx.request.body, {
+  const blog = Object.assign(ctx.request.body, {
     author: ctx.session.username
   })
-  const id = await newBlog(ctx.request.body)
+  const id = await newBlog(blog)
   if (id) return ctx.body = new SuccessModel('新增博客成功')
   else return ctx.body = new ErrorModel('新增博客失败')
 })

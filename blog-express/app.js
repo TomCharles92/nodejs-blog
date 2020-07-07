@@ -22,8 +22,8 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
 // 插件 morgan，用来记录日志
-// 这里会记录访问日志？
-if (process.env.NODE_EVN === 'dev') {
+// 这里会记录访问日志
+if (process.env.NODE_ENV === 'dev') {
   app.use(logger('dev'));
 } else {
   const fileName = path.resolve(__dirname, "logs/access.log")
