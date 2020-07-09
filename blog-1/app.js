@@ -40,7 +40,7 @@ const serverHandle = (req, res) => {
   req.path = req.url.split('?')[0]
   // 解析 query
   req.query = querystring.parse(req.url.split('?')[1])
-  // 解析 cookie
+  // 解析 cookie：将 req.headers.cookie 中的值解析成对象
   req.cookie = {}
   const cookieStr = req.headers.cookie || ''
   cookieStr.split(';').forEach(item => {
@@ -52,8 +52,8 @@ const serverHandle = (req, res) => {
   // 解析 session
   let needSetCookie = false
 
-  // 读取或生成 userId
   let userId = req.cookie.userid
+  // 用户第一次访问，需要初始化 sessionId
   if (!userId) {
     needSetCookie = true
     userId = `${Date.now()}_${Math.random()}`
@@ -62,6 +62,7 @@ const serverHandle = (req, res) => {
   req.sessionId = userId
   console.log(req.sessionId);
 
+  // 根据 sessionId 从 redis 中取出用户数据
   get(req.sessionId).then(sessionData => {
       if (sessionData === null) {
         set(req.sessionId, {})
